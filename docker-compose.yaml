@@ -1,0 +1,49 @@
+version: '3.7'
+services:
+  app-chat:
+    container_name: chatapp
+    image: node:16-alpine
+    command: sh -c "yarn install"
+    ports:
+      - 4000:3000
+    working_dir: /app
+    volumes:
+      - workbd:/var/lib/chat
+    networks:
+      - redbd
+
+  mysql:
+    container_name: BDmysql
+    image: mysql:8.0.30-debian
+    volumes:
+      - workbd:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: tok10
+      MYSQL_DATABASE: workbd
+    networks:
+      - redbd
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 1GB
+
+  admniner:
+    container_name: managerbd
+    image: adminer:4.8.1
+    restart: always
+    ports:
+      - 9100:8080
+    networks:
+      - redbd
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 1GB
+    
+volumes:
+  workbd:
+
+networks:
+  redbd:
